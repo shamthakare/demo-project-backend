@@ -1,9 +1,8 @@
+//backend code
 const express = require('express');
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const mysql = require('mysql2');
-
-
 const app = express();
 
 app.use(cors());
@@ -24,7 +23,7 @@ db.connect(err => {
 app.get('/', (req, res) => {
     res.send(`<h1>working</h1>`);
 })
-
+    //Display data
 app.get('/users', (req, res) => {
     let qrr = `SELECT * FROM user`;
     db.query(qrr, (err, result) => {
@@ -32,36 +31,69 @@ app.get('/users', (req, res) => {
         if (result.length > 0) {
             res.send({ massage: 'All user Data', data: result });
         }
-    }); 
+    });
 });
 
 //get single data by id
-// app.get('/user/:id',(req,res)=>{
-//     let qrId = req.params.id;
-//     let qr = `SELECT * FROM users where id = ${qr}`;
-//     db.query(qr,(err.results) =>{
-//         if(er){
-//             console.log(err);
-//         }
-//         if(results.length>0){
+app.get('/user/:id', (req, res) => {
+    let qrId = req.params.id;
+    let qr = `SELECT * FROM user where id = ${qrId}`
+    db.query(qr, (err, results) => {
+        if (err) { console.log(err); }
+        if (results.length > 0) {
+            res.send({ massage: "Get data by Id", data: results })
+        } else {
+            res.send({
+                massage: "Data not found dear"
+            })
+        }
+    })
+})
+  //add data
+app.post('/users', (req, res) => {
+    let fullname = req.body.fullname;
+    let email = req.body.email;
+    let mobile = req.body.mobile;
+    let qr = `insert into user(fullname,email,mobile) values('${fullname}','${email}','${mobile}')`;
+    db.query(qr, (err, results) => {
+        if (err) { console.log(err) }
+        res.send({ massage: "Data create sucsess" });
+    })
+})
+//update data
+app.put('/user/:id', (req, res) => {
+    // console.log('after',typeof(uid));
+    let uid = parseInt(req.params.id);
+    console.log(typeof(uid));
+    // console.log(req.body,"Update data")
+    let fullname = req.body.fullname;
+    let email = req.body.email;
+    let mobile = req.body.mobile;
+    let qr = `update user set fullname ='${fullname}' ,email = '${email}' ,mobile = '${mobile}'  where id = ${uid}`;
+    db.query(qr, (err, results) => {
+        if (err) { console.log(err) }
+        res.send({
+            massage: "data update successful",
+            data: results
+        })
+    })
 
-//         }
-//     }) 
-// })
+})
 
+//Delet data
+app.delete('/user/:id', (req, res) => {
+    let uid = req.params.id;
+    let qr = `delete from user where id = '${uid}'`;
+    db.query(qr, (err, results) => {
+        if (err) { console.log(err) }
+        res.send({
+            massage: "Data delete successful"
 
+        })
+    })
+})
 
 
 app.listen(3000, () => {
     console.log("server is runing 3000 PORT");
-
 })
-
-
-
-// git init
-// git add .
-// git commit -m "first commit"
-// git branch -M main
-// git remote add origin https://github.com/shamthakare/demo-project-backend.git
-// git push -u origin main
