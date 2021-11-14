@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
     res.send(`<h1>working</h1>`);
 })
     //Display data
-app.get('/users', (req, res) => {
+app.get('/user', (req, res) => {
     let qrr = `SELECT * FROM user`;
     db.query(qrr, (err, result) => {
         if (err) { console.log(err, 'err'); }
@@ -50,7 +50,7 @@ app.get('/user/:id', (req, res) => {
     })
 })
   //add data
-app.post('/users', (req, res) => {
+app.post('/user', (req, res) => {
     let fullname = req.body.fullname;
     let email = req.body.email;
     let mobile = req.body.mobile;
